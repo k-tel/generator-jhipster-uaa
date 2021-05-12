@@ -1,0 +1,10 @@
+{
+  "generator-jhipster-blueprint": {
+    "promptValues": {
+      "githubName": "k-tel",
+      "authorName": "David Steiman",
+      "authorEmail": "xetys.0@gmail.com",
+      "authorUrl": ""
+    }
+  }
+}

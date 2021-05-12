@@ -1,0 +1,61 @@
+{
+  "name": "generator-jhipster-uaa",
+  "version": "7.0.0-alpha",
+  "description": "Integrates UAA into your JHipster application",
+  "keywords": [
+    "yeoman-generator",
+    "jhipster-blueprint",
+    "jhipster-7"
+  ],
+  "homepage": "https://github.com/k-tel/generator-jhipster-uaa",
+  "author": {
+    "name": "David Steiman",
+    "email": "xetys.0@gmail.com",
+    "url": ""
+  },
+  "files": [
+    "generators"
+  ],
+  "main": "generators/app/index.js",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/k-tel/generator-jhipster-uaa.git"
+  },
+  "dependencies": {
+    "chalk": "2.4.1",
+    "generator-jhipster": "7.0.1"
+  },
+  "devDependencies": {
+    "chai": "4.1.2",
+    "ejs-lint": "0.3.0",
+    "eslint": "5.0.0",
+    "eslint-config-airbnb-base": "13.0.0",
+    "eslint-config-prettier": "3.1.0",
+    "eslint-plugin-import": "2.12.0",
+    "eslint-plugin-mocha": "8.1.0",
+    "eslint-plugin-prettier": "3.0.0",
+    "fs-extra": "6.0.1",
+    "jsdoc": "3.5.5",
+    "mocha": "5.2.0",
+    "prettier": "1.14.3",
+    "shelljs": "0.8.4",
+    "sinon": "6.0.0",
+    "yeoman-assert": "3.1.1",
+    "yeoman-test": "1.7.2"
+  },
+  "scripts": {
+    "lint": "eslint .",
+    "lint-fix": "npm run lint -- --fix",
+    "pretest": "npm run lint",
+    "test": "npm run test:unit -- test/*.spec.js",
+    "test:unit": "mocha --timeout 20000 --slow 0 --reporter spec",
+    "jsdoc": "jsdoc --configure jsdoc-conf.json",
+    "release": "git push && git push --tags && npm publish",
+    "release:patch": "npm version patch -a -m \"Update to %s\" && npm run release",
+    "release:minor": "npm version minor -a -m \"Update to %s\" && npm run release",
+    "release:major": "npm version major -a -m \"Update to %s\" && npm run release"
+  },
+  "bugs": {
+    "url": "https://github.com/k-tel/generator-jhipster-uaa/issues"
+  }
+}
