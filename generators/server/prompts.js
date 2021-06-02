@@ -5,8 +5,15 @@ const {serverDefaultConfig} = require('generator-jhipster/generators/generator-d
 
 module.exports = {
     askForServerSideOpts: askForServerSideOpts,
+    askForModuleName,
 };
 
+function askForModuleName() {
+    if (this.jhipsterConfig.baseName) return undefined;
+    console.log(this.jhipsterConfig.baseName);
+
+    return this.askModuleName(this);
+}
 
 function askForServerSideOpts() {
     if (this.existingProject) return undefined;

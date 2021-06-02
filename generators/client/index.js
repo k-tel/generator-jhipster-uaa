@@ -20,44 +20,56 @@ module.exports = class extends ClientGenerator {
     }
 
     get initializing() {
-        /**
-         * Any method beginning with _ can be reused from the superclass `ClientGenerator`
-         *
-         * There are multiple ways to customize a phase from JHipster.
-         *
-         * 1. Let JHipster handle a phase, blueprint doesnt override anything.
-         * ```
-         *      return super._initializing();
-         * ```
-         *
-         * 2. Override the entire phase, this is when the blueprint takes control of a phase
-         * ```
-         *      return {
-         *          myCustomInitPhaseStep() {
-         *              // Do all your stuff here
-         *          },
-         *          myAnotherCustomInitPhaseStep(){
-         *              // Do all your stuff here
-         *          }
-         *      };
-         * ```
-         *
-         * 3. Partially override a phase, this is when the blueprint gets the phase from JHipster and customizes it.
-         * ```
-         *      const phaseFromJHipster = super._initializing();
-         *      const myCustomPhaseSteps = {
-         *          displayLogo() {
-         *              // override the displayLogo method from the _initializing phase of JHipster
-         *          },
-         *          myCustomInitPhaseStep() {
-         *              // Do all your stuff here
-         *          },
-         *      }
-         *      return Object.assign(phaseFromJHipster, myCustomPhaseSteps);
-         * ```
-         */
         // Here we are not overriding this phase and hence its being handled by JHipster
         return super._initializing();
+    }
+
+    get loading() {
+        const phaseFromJHipster = super._loading();
+
+        const customPhases = {
+            validateSkipServer() {
+                if (
+                    this.jhipsterConfig.skipServer &&
+                    !(
+                        this.jhipsterConfig.databaseType &&
+                        this.jhipsterConfig.devDatabaseType &&
+                        this.jhipsterConfig.prodDatabaseType &&
+                        this.jhipsterConfig.authenticationType
+                    )
+                ) {
+                    this.error(
+                        `When using skip-server flag, you must pass a database option and authentication type using ${chalk.yellow(
+                            '--db'
+                        )} and ${chalk.yellow('--auth')} flags`
+                    );
+                    if (this.jhipsterConfig.skipServer && this.jhipsterConfig.authenticationType === 'uaa' && !this.jhipsterConfig.uaaBaseName) {
+                        this.error(
+                            `When using skip-server flag and UAA as authentication method, you must pass a UAA base name using ${chalk.yellow(
+                                '--uaa-base-name'
+                            )} flag`
+                        );
+                    }
+                }
+            },
+        }
+
+        return { ...phaseFromJHipster, ...customPhases };
+    }
+
+    get preparing() {
+        const phasesFromJHipster = this._preparing();
+
+        const customPhases = {
+           prepareUaa() {
+               this.apiUaaPath = `${this.authenticationType === 'uaa' ? `services/${this.uaaBaseName.toLowerCase()}/` : ''}`;
+               if (this.authenticationType === 'oauth2' || (this.databaseType === 'no' && this.authenticationType !== 'uaa')) {
+                   this.skipUserManagement = true;
+               }
+           }
+        }
+
+        return { ...phasesFromJHipster, ...customPhases };
     }
 
     get prompting() {

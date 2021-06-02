@@ -5,6 +5,8 @@ const chalk = require('chalk');
 const shelljs = require('shelljs');
 const ServerGenerator = require('generator-jhipster/generators/server');
 const customPrompts = require('./prompts');
+const writeFiles = require('./files').writeFiles;
+const askForModuleNameValidator = require('../utils').askForModuleNameValidator;
 
 module.exports = class extends ServerGenerator {
     constructor(args, opts) {
@@ -30,32 +32,16 @@ module.exports = class extends ServerGenerator {
     get prompting() {
         const jhipsterPrompts = super._prompting();
         jhipsterPrompts.askForServerSideOpts = customPrompts.askForServerSideOpts;
+        jhipsterPrompts.askForModuleName = customPrompts.askForModuleName;
 
 
         return jhipsterPrompts;
     }
 
-    async askModuleName(generator) {
+    async askModuleName(generator = this) {
         const defaultAppBaseName = this.getDefaultAppName();
-        console.log('OVERRIDDE');
-        const answers = await generator.prompt({
-            type: 'input',
-            name: 'baseName',
-            validate: input => {
-                if (!/^([a-zA-Z0-9_]*)$/.test(input)) {
-                    return 'Your base name cannot contain special characters or a blank space';
-                }
-                if (generator.applicationType === 'microservice' && /_/.test(input)) {
-                    return 'Your base name cannot contain underscores as this does not meet the URI spec';
-                }
-                if (input === 'application') {
-                    return 'Your base name cannot be named \'application\' as this is a reserved name for Spring Boot';
-                }
-                return true;
-            },
-            message: 'What is the base name of your application?',
-            default: defaultAppBaseName,
-        });
+        console.log('OVERRIDDE', this.prompt);
+        const answers = await generator.prompt(askForModuleNameValidator(generator.applicationType, defaultAppBaseName));
 
         generator.baseName = generator.jhipsterConfig.baseName = answers.baseName;
     }
@@ -86,7 +72,10 @@ module.exports = class extends ServerGenerator {
 
     get writing() {
         // Here we are not overriding this phase and hence its being handled by JHipster
-        return super._writing();
+        const phaseFromJHipster = super._writing();
+        const customPhase = writeFiles();
+
+        return { ...phaseFromJHipster, ...customPhase };
     }
 
     get install() {
@@ -118,7 +107,6 @@ module.exports = class extends ServerGenerator {
             const fileData = this.fs.readJSON(fromPath);
             if (fileData && fileData['generator-jhipster']) {
                 let fileDatum = fileData['generator-jhipster'];
-                console.log('filteDatyn', fileDatum);
                 return fileDatum;
             }
             return false;
