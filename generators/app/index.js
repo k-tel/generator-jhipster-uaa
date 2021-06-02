@@ -72,7 +72,6 @@ module.exports = class extends AppGenerator {
     get prompting() {
         // Here we are not overriding this phase and hence its being handled by JHipster
         // return super._prompting();
-        console.log('Hey youu');
         return {
             askForInsightOptIn: prompts.askForInsightOptIn,
             askForApplicationType: customPropmts.askForApplicationTypeWithUaa,
@@ -87,7 +86,6 @@ module.exports = class extends AppGenerator {
         const customPhases = {
             setupUaa() {
                 if (this.jhipsterConfig.applicationType === 'uaa') {
-                    console.log('set UAA defaults');
                     this.jhipsterConfig.skipClient = true;
                     this.jhipsterConfig.skipUserManagement = false;
                     this.jhipsterConfig.authenticationType = 'uaa';
